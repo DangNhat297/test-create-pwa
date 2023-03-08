@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="manifest"
+      href="manifest.webmanifest"
+      crossorigin="use-credentials"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="installApp">Install</button>
+    <script>
+      window.onload = () => {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("sw.js");
+        }
+      }
+
+      let deferredPrompt;
+      const addBtn = document.querySelector("#installApp");
+      window.addEventListener("beforeinstallprompt", (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        // Update UI to notify the user they can add to home screen
+        // Gather the data from your custom install UI event listener
+        addBtn.addEventListener("click", async () => {
+          // deferredPrompt is a global variable we've been using in the sample to capture the `beforeinstallevent`
+          deferredPrompt.prompt();
+          // Find out whether the user confirmed the installation or not
+          const { outcome } = await deferredPrompt.userChoice;
+          // The deferredPrompt can only be used once.
+          deferredPrompt = null;
+          // Act on the user's choice
+          if (outcome === "accepted") {
+            console.log("User accepted the install prompt.");
+          } else if (outcome === "dismissed") {
+            console.log("User dismissed the install prompt");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
