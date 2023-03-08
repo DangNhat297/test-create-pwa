@@ -18,7 +18,7 @@
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.register("sw.js");
         }
-      }
+      };
 
       let deferredPrompt;
       const addBtn = document.querySelector("#installApp");
@@ -33,6 +33,11 @@
           // deferredPrompt is a global variable we've been using in the sample to capture the `beforeinstallevent`
           deferredPrompt.prompt();
           // Find out whether the user confirmed the installation or not
+          if (window.matchMedia("(display-mode: standalone)").matches) {
+            console.log("display-mode is app installed");
+          } else {
+            console.log("display-mode is browser");
+          }
           const { outcome } = await deferredPrompt.userChoice;
           // The deferredPrompt can only be used once.
           deferredPrompt = null;
